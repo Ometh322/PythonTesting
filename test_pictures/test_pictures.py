@@ -849,3 +849,112 @@ def test_chrome_shopping_cart():
                               attachment_type=AttachmentType.PNG)
             driver.close()
             driver.quit()
+
+
+# 2.5 Перейти в “Ювелирное искусство”, добавить первое изделие в
+# корзину, проверить, что выбранный товар находится в корзине, стоимость
+# товара не изменилась. (Firefox)
+@allure.story("The test of shopping cart, Firefox")
+@allure.severity("critical")
+def test_firefox_shopping_cart():
+    with allure.step("Create a driver, open the window to full screen, go to the website"):
+        try:
+            driver = webdriver.Firefox()
+            driver.maximize_window()
+            driver.get("https://artnow.ru")
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Open the drop-down list"):
+        try:
+            drop_down_list = driver.find_element(
+                By.CSS_SELECTOR,
+                "#left_container > div > ul:nth-child(2) > li.menu-group.gids > div")
+            drop_down_list.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Moving on to jewelry goods"):
+        try:
+            works = driver.find_element(By.CSS_SELECTOR,
+                                        "#left_container > div > ul:nth-child(2) > li:nth-child(5) > a")
+            works.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Choose the first goods and save its price"):
+        try:
+            chosen_work = driver.find_element(By.CSS_SELECTOR,
+                                              "#sa_container > div:nth-child(3) > a:nth-child(1) > div")
+            chosen_work.click()
+            price1 = int(re.findall(r'<b>Цена</b> <b>(.*?) руб', str(driver.page_source))[0])
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Add the work to the shopping cart; go there"):
+        try:
+            add_to_basket = driver.find_element(By.CSS_SELECTOR, "#CartButton1127052")
+            add_to_basket.click()
+            time.sleep(2)
+            to_basket = driver.find_element(By.CSS_SELECTOR, "#cmodal > div > p > button.ok-button")
+            to_basket.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    try:
+        assert not "В вашей корзине пока нет товаров" in str(driver.page_source)
+    except AssertionError("There is no goods in the cart"):
+        with allure.step("Taking a screenshot of the error"):
+            allure.attach(driver.get_screenshot_as_png(), name="firefox_error", attachment_type=AttachmentType.PNG)
+
+            driver.close()
+            driver.quit()
+
+    with allure.step("Looking for the price of the product in the cart"):
+        try:
+            price2 = re.findall(r'class="price">(.*?) руб', str(driver.page_source))[0]
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    try:
+        assert int(str(price2)) == price1
+    except AssertionError("The price does not match"):
+        with allure.step("Taking a screenshot of the error"):
+            allure.attach(driver.get_screenshot_as_png(), name="firefox_error", attachment_type=AttachmentType.PNG)
+        driver.close()
+        driver.quit()
+    with allure.step("Closing driver"):
+        try:
+            driver.close()
+            driver.quit()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()

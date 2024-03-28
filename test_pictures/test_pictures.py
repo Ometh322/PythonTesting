@@ -508,3 +508,112 @@ def test_chrome_favorite():
                               attachment_type=AttachmentType.PNG)
             driver.close()
             driver.quit()
+
+# 2.3 Перейти в “Батик”, добавить первую картину в избранное, проверить,
+# что выбранная картина сохранилась в разделе «Избранное». (Firefox)
+@allure.story("he test of adding an item to favorites, Firefox")
+@allure.severity("critical")
+def test_firefox_favorite():
+    with allure.step("Create a driver, open the window to full screen, go to the website"):
+        try:
+            driver = webdriver.Firefox()
+            driver.maximize_window()
+            driver.get("https://artnow.ru")
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Open the drop-down list"):
+        try:
+            drop_down_list = driver.find_element(
+                By.CSS_SELECTOR,
+                "#left_container > div > ul:nth-child(2) > li.menu-group.gids > div")
+            drop_down_list.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Go to batik"):
+        try:
+            paintings = driver.find_element(By.CSS_SELECTOR,
+                                            "#left_container > div > ul:nth-child(2) > li:nth-child(3) > a")
+            paintings.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Select the first picture and open it"):
+        try:
+            chosen_painting = driver.find_element(By.CSS_SELECTOR,
+                                                  "#sa_container > div:nth-child(3) > a:nth-child(1) > div")
+            chosen_painting.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Add it to favorites, keeping the name"):
+        try:
+            response1 = str(re.findall('<title>«(.*?)» ', str(driver.page_source))[0])
+            heart = driver.find_element(By.CSS_SELECTOR,
+                                        "#main_container > div:nth-child(3) > div.infocontainer > div.sale-span > span")
+            heart.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(),name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Go to favorites"):
+        try:
+            favorites = driver.find_element(By.CSS_SELECTOR, "body > div.topheader > span.fvtico > img")
+            favorites.click()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Looking for the name of the painting in favorites"):
+        try:
+            fav_painting = driver.find_element(By.CSS_SELECTOR, "#sa_container > div.post > a:nth-child(1) > div")
+            fav_painting.click()
+            response2 = str(re.findall(r'<title>«(.*?)» ', str(driver.page_source))[0])
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    try:
+        assert response1 == response2
+    except AssertionError("If there is another picture in the favorites"):
+        with allure.step("Taking a screenshot of the error"):
+            allure.attach(driver.get_screenshot_as_png(), name="firefox_error", attachment_type=AttachmentType.PNG)
+        driver.close()
+        driver.quit()
+    with allure.step("Closing driver"):
+        try:
+            driver.close()
+            driver.quit()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()

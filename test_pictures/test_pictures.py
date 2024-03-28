@@ -678,3 +678,66 @@ def test_chrome_giraffe():
                               attachment_type=AttachmentType.PNG)
             driver.close()
             driver.quit()
+
+# 2.4 Ввести в поисковую строку «Жираф», проверить, что название первой
+# картины содержит слово «Жираф». (Firfox)
+@allure.story("The test of searching the Жирафик, Firefox")
+@allure.severity("critical")
+def test_firefox_giraffe():
+    with allure.step("Create a driver, open the window to full screen, go to the website"):
+        try:
+            driver = webdriver.Firefox()
+            driver.maximize_window()
+            driver.get("https://artnow.ru")
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Opening the search line and searching for giraffe"):
+        try:
+            find_bar = driver.find_element(By.CSS_SELECTOR,
+                                           "#MainSearchForm > div > div:nth-child(1) > input.inp.scLarge")
+            find_bar.click()
+            find_bar.send_keys('Жираф')
+            use = driver.find_element(By.CSS_SELECTOR, "button.control")
+            use.click()
+            time.sleep(3)
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    with allure.step("Looking for giraffe in the result"):
+        try:
+            response = re.search(r'<meta itemprop="description" content="(.*?)">',
+                                 str(driver.page_source)).group()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
+    try:
+        assert "Жираф" in response
+    except AssertionError("If there is no giraffe"):
+        with allure.step("Taking a screenshot of the error"):
+            allure.attach(driver.get_screenshot_as_png(), name="firefox_error", attachment_type=AttachmentType.PNG)
+        driver.close()
+        driver.quit()
+    with allure.step("Closing driver"):
+        try:
+            driver.close()
+            driver.quit()
+        except Exception as e:
+            print(e)
+            with allure.step("Taking a screenshot of the error"):
+                allure.attach(driver.get_screenshot_as_png(), name="firefox_error",
+                              attachment_type=AttachmentType.PNG)
+            driver.close()
+            driver.quit()
